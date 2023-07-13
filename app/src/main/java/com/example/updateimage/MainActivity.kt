@@ -30,7 +30,6 @@ class MainActivity : AppCompatActivity() {
         button.setOnClickListener {
                 val intent = Intent(this, UpdateImageActivity::class.java)
                 startActivity(intent)
-
         }
 
 
@@ -111,22 +110,72 @@ class MainActivity : AppCompatActivity() {
 //            Log.v(TAG, "Request took $time ms.")
 //        }
 
-        val btnStartCoroutineActivity = findViewById<Button>(R.id.btnStartCoroutineActivity)
-        btnStartCoroutineActivity.setOnClickListener {
-            lifecycleScope.launch {
-                while (true){
-                    delay(1000L)
-                    Log.v(TAG,"Still running ....")
-                }
-            }
-            GlobalScope.launch {
-                    delay(1000L)
-                    Intent(this@MainActivity, CoroutineActivity::class.java).also {
-                        startActivity(it)
-                        finish()
-                    }
-            }
-        }
+//        val btnStartCoroutineActivity = findViewById<Button>(R.id.btnStartCoroutineActivity)
+//        btnStartCoroutineActivity.setOnClickListener {
+//            lifecycleScope.launch {
+//                while (true){
+//                    delay(1000L)
+//                    Log.v(TAG,"Still running ....")
+//                }
+//            }
+//            GlobalScope.launch {
+//                    delay(1000L)
+//                    Intent(this@MainActivity, CoroutineActivity::class.java).also {
+//                        startActivity(it)
+//                        finish()
+//                    }
+//            }
+//        }
+
+
+        //for exception handling
+//        val handler = CoroutineExceptionHandler { _, throwable ->
+//            println("Caught exception: $throwable")
+//        }
+//
+//        lifecycleScope.launch(handler) {
+//            launch {
+//                throw Exception("inside coroutine exception..")
+//            }
+//
+////            throw Exception("Something went wrong..")
+//        }
+
+
+        //CoroutineScope -> Cancel whenever any of its children fail.
+        //SupervisorScope -> If we want to continue with the other tasks even when one fails, we go with the supervisorScope. A supervisorScope won’t cancel other children when one of them fails.
+
+//        val handler = CoroutineExceptionHandler { _, throwable ->
+//            println("Caught exception: $throwable")
+//        }
+//        CoroutineScope(Dispatchers.Main+handler).launch(handler) {
+//            supervisorScope {//catch all coroutines even if throw an exception (viewModelScope da arxa planda bundan ist. edir)
+//                launch {
+//                    delay(300L)
+//                    throw Exception("Coroutine 1 failed")
+//                }
+//                launch {
+//                    delay(400L)
+//                    println("Coroutine 2 finished")
+//                }
+//            }
+//        }
+
+
+
+//        lifecycleScope.launch {
+//            val job = launch {
+//                try {
+//                    delay(500L)
+//                }catch (e: Exception){
+//                    e.printStackTrace()
+//                }
+//                println("Coroutine 1 finished")
+//            }
+//            delay(300L)
+//            job.cancel()
+//        }
+
 
     }
 
@@ -156,12 +205,12 @@ class MainActivity : AppCompatActivity() {
         val imageView = findViewById<ImageView>(R.id.imageView)
         val updatedImage = getSharedPreferences("updatedImage", Context.MODE_PRIVATE).getString("url","")
 
-//        val byteArray = Base64.decode(base64String, Base64.DEFAULT)
+        val byteArray = Base64.decode(updatedImage, Base64.DEFAULT)
         Glide
             .with(this)
 //            .asBitmap()
-            .load(updatedImage)
-//            .load(byteArray)
+//            .load(updatedImage)
+            .load(byteArray)
             .centerCrop()
             .placeholder(R.drawable.ic_launcher_foreground)
             .into(imageView)

@@ -27,6 +27,8 @@ val url = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8_2mqGlQy5cqLe
 
 class UpdateImageActivity : AppCompatActivity(){
 
+    var byteString = ""
+
     fun uriToBase64(contentResolver: ContentResolver, imageUri: Uri): String? {
         val inputStream = contentResolver.openInputStream(imageUri)
         val bitmap = BitmapFactory.decodeStream(inputStream)
@@ -35,6 +37,7 @@ class UpdateImageActivity : AppCompatActivity(){
         val imageBytes = outputStream.toByteArray()
         return android.util.Base64.encodeToString(imageBytes, android.util.Base64.DEFAULT)
     }
+
 
     @SuppressLint("Recycle")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,7 +52,7 @@ class UpdateImageActivity : AppCompatActivity(){
                 try {
                     val bytes = contentResolver.openInputStream(uri)?.readBytes()
                     val base64String = uriToBase64(contentResolver, uri)
-                    val bs64 = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri)
+//                    val bs64 = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri)
                     val bytesStr = Base64.encodeToString(bytes, Base64.DEFAULT)
                     val myBitmap = decodeFile(base64String)
 //                    val myBitmap = decodeFile(bs64)
@@ -76,11 +79,13 @@ class UpdateImageActivity : AppCompatActivity(){
                         .centerCrop()
                         .into(imageView)
 
+                    byteString = bytesStr2
 
                     Log.v("TAGGGG","bytesStr/bytesStr2: ${bytesStr.length} / ${bytesStr2.length}")
 
                     Log.v("TAGGGG","byteArrayLocal/byteArrayLocal2: ${byteArrayLocal.size} / ${byteArrayLocal2.size}")
 
+                    getSharedPreferences("updatedImage", Context.MODE_PRIVATE).edit().putString("url",byteString).apply()
 
                 } catch (error: IOException) {
                     error.printStackTrace() // This exception always occurs
